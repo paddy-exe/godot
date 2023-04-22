@@ -7961,3 +7961,43 @@ VisualShaderNodeRemap::VisualShaderNodeRemap() {
 
 	simple_decl = false;
 }
+
+////////////// Remap
+
+String VisualShaderNodeTutorialUV::get_caption() const {
+	return "TutorialUV";
+}
+
+int VisualShaderNodeTutorialUV::get_input_port_count() const {
+	return 0;
+}
+
+VisualShaderNodeTutorialUV::PortType VisualShaderNodeTutorialUV::get_input_port_type(int p_port) const {
+	return PORT_TYPE_SCALAR;
+}
+
+String VisualShaderNodeTutorialUV::get_input_port_name(int p_port) const {
+	return "";
+}
+
+int VisualShaderNodeTutorialUV::get_output_port_count() const {
+	return 1;
+}
+
+VisualShaderNodeTutorialUV::PortType VisualShaderNodeTutorialUV::get_output_port_type(int p_port) const {
+	return PORT_TYPE_VECTOR_2D;
+}
+
+String VisualShaderNodeTutorialUV::get_output_port_name(int p_port) const {
+	return "TutorialUV";
+}
+
+String VisualShaderNodeTutorialUV::generate_code(Shader::Mode p_mode, VisualShader::Type p_type, int p_id, const String *p_input_vars, const String *p_output_vars, bool p_for_preview) const {
+	String code;
+	code += vformat("		%s = UV;\n", p_output_vars[0]);
+	return code;
+}
+
+VisualShaderNodeTutorialUV::VisualShaderNodeTutorialUV() {
+	simple_decl = true;
+}

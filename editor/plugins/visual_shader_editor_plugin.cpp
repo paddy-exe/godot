@@ -5895,6 +5895,9 @@ VisualShaderEditor::VisualShaderEditor() {
 	add_options.push_back(AddOption("RandomRange", "Utility", "VisualShaderNodeRandomRange", TTR("Returns a random value between the minimum and maximum input values."), {}, VisualShaderNode::PORT_TYPE_SCALAR));
 	add_options.push_back(AddOption("Remap", "Utility", "VisualShaderNodeRemap", TTR("Remaps a given input from the input range to the output range."), {}, VisualShaderNode::PORT_TYPE_SCALAR));
 
+	// TUTORIAL
+	add_options.push_back(AddOption("TutorialUV", "Tutorial/UV", "VisualShaderNodeTutorialUV", TTR("This is a tutorial UV node to explain how to contribute to Godot's Visual Shader system."), {}, VisualShaderNode::PORT_TYPE_VECTOR_2D, TYPE_FLAGS_FRAGMENT, Shader::MODE_SPATIAL));
+
 	// VECTOR
 
 	add_options.push_back(AddOption("VectorFunc", "Vector/Common", "VisualShaderNodeVectorFunc", TTR("Vector function."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D));
