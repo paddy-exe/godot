@@ -147,6 +147,7 @@ public class Godot extends Fragment implements SensorEventListener, IDownloaderC
 	private boolean mStatePaused;
 	private boolean activityResumed;
 	private int mState;
+	private int mDisplayRotation;
 
 	// Used to dispatch events to the main thread.
 	private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
@@ -556,6 +557,10 @@ public class Godot extends Fragment implements SensorEventListener, IDownloaderC
 		return deviceInfo.reqGlEsVersion;
 	}
 
+	public int getDisplayRotation() {
+		return mDisplayRotation;
+	}
+
 	@CallSuper
 	protected String[] getCommandLine() {
 		String[] original = parseCommandLine();
@@ -709,6 +714,8 @@ public class Godot extends Fragment implements SensorEventListener, IDownloaderC
 				xrMode = XRMode.OVR;
 			} else if (command_line[i].equals(XRMode.OPENXR.cmdLineArg)) {
 				xrMode = XRMode.OPENXR;
+			} else if (command_line[i].equals(XRMode.ARCORE.cmdLineArg)) {
+				xrMode = XRMode.ARCORE;
 			} else if (command_line[i].equals("--debug_opengl")) {
 				use_debug_opengl = true;
 			} else if (command_line[i].equals("--translucent")) {
@@ -831,6 +838,10 @@ public class Godot extends Fragment implements SensorEventListener, IDownloaderC
 		return containerLayout;
 	}
 
+	public XRMode getXRMode() {
+		return this.xrMode;
+	}
+
 	@Override
 	public void onDestroy() {
 		for (int i = 0; i < singleton_count; i++) {
@@ -948,10 +959,10 @@ public class Godot extends Fragment implements SensorEventListener, IDownloaderC
 
 		Display display =
 				((WindowManager)getActivity().getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-		int displayRotation = display.getRotation();
+		mDisplayRotation = display.getRotation();
 
 		float[] rotatedValues = new float[3];
-		switch (displayRotation) {
+		switch (mDisplayRotation) {
 			case Surface.ROTATION_0:
 				rotatedValues[0] = values[0];
 				rotatedValues[1] = values[1];
