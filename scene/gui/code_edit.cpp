@@ -2237,6 +2237,94 @@ bool CodeEdit::is_line_code_region_end(int p_line) const {
 	return split.size() > 0 && split[0] == code_region_end_string;
 }
 
+bool CodeEdit::_fold_code_region(int p_line) {
+	ERR_FAIL_INDEX_V(p_line, get_line_count(), false);
+	if (!is_line_folding_enabled() || !can_fold_line(p_line)) {
+		return false;
+	}
+
+	/* Find the last line to be hidden. */
+	const int line_count = get_line_count() - 1;
+	int end_line = line_count;
+
+	// Fold code region.
+	if (is_line_code_region_start(p_line)) {
+		int region_level = 0;
+		for (int endregion_line = p_line + 1; endregion_line < get_line_count(); endregion_line++) {
+			if (is_line_code_region_start(endregion_line)) {
+				region_level += 1;
+			}
+			if (is_line_code_region_end(endregion_line)) {
+				region_level -= 1;
+				if (region_level == -1) {
+					end_line = endregion_line;
+					break;
+				}
+			}
+		}
+		set_line_background_color(p_line, theme_cache.folded_code_region_color);
+	}
+
+	for (int i = p_line + 1; i <= end_line; i++) {
+		_set_line_as_hidden(i, true);
+	}
+
+	// Collapse any carets in the hidden area.
+	collapse_carets(p_line, get_line(p_line).length(), end_line, get_line(end_line).length(), true);
+
+	return true;
+}
+
+bool CodeEdit::_unfold_code_region(int p_line) {
+	ERR_FAIL_INDEX_V(p_line, get_line_count(), false);
+	if (!is_line_folded(p_line) && !_is_line_hidden(p_line)) {
+		return false;
+	}
+
+	int fold_start = p_line;
+	for (; fold_start > 0; fold_start--) {
+		if (is_line_folded(fold_start) && is_line_code_region_start(fold_start)) {
+			break;
+		}
+	}
+	fold_start = is_line_folded(fold_start) ? fold_start : p_line;
+
+	for (int i = fold_start + 1; i < get_line_count(); i++) {
+		if (!_is_line_hidden(i)) {
+			break;
+		}
+		_set_line_as_hidden(i, false);
+		if (is_line_code_region_start(i - 1)) {
+			set_line_background_color(i - 1, Color(0.0, 0.0, 0.0, 0.0));
+		}
+	}
+	return true;
+}
+
+void CodeEdit::fold_all_code_regions() {
+	bool any_line_folded = false;
+
+	for (int i = 0; i < get_line_count(); i++) {
+		any_line_folded |= _fold_line(i);
+	}
+
+	if (any_line_folded) {
+		emit_signal(SNAME("_fold_line_updated"));
+	}
+}
+
+void CodeEdit::unfold_all_code_regions() {
+	bool any_line_unfolded = false;
+
+	for (int i = 0; i < get_line_count(); i++) {
+		any_line_unfolded |= _unfold_line(i);
+	}
+
+	if (any_line_unfolded) {
+		emit_signal(SNAME("_fold_line_updated"));
+	}
+}
+
 /* Delimiters */
 // Strings
 void CodeEdit::add_string_delimiter(const String &p_start_key, const String &p_end_key, bool p_line_only) {

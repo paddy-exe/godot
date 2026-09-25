@@ -137,6 +137,8 @@ private:
 	void _update_code_region_tags();
 	bool _fold_line(int p_line);
 	bool _unfold_line(int p_line);
+	bool _fold_code_region(int p_line);
+	bool _unfold_code_region(int p_line);
 
 	/* Delimiters */
 	enum DelimiterType {
@@ -482,6 +484,8 @@ public:
 	void set_code_region_tags(const String &p_start = "region", const String &p_end = "endregion");
 	bool is_line_code_region_start(int p_line) const;
 	bool is_line_code_region_end(int p_line) const;
+	void fold_all_code_regions();
+	void unfold_all_code_regions();
 
 	/* Delimiters */
 	void add_string_delimiter(const String &p_start_key, const String &p_end_key, bool p_line_only = false);
